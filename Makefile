@@ -1,7 +1,10 @@
 CID_FILE = /tmp/grokzen-redis-cluster.cid
 CID =`cat $(CID_FILE)`
 IMAGE_NAME = grokzen/redis-cluster
-PORTS = -p 7000:7000 -p 7001:7001 -p 7002:7002 -p 7003:7003 -p 7004:7004 -p 7005:7005 -p 7006:7006 -p 7007:7007
+PORTS = -p 7000:7000 -p 7001:7001 -p 7002:7002 -p 7003:7003 -p 7004:7004 -p 7005:7005
+NAME = redis1
+IP_STATIC = 172.18.0.2
+NET_NAME = state_net
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
@@ -25,9 +28,14 @@ rebuild:
 	@echo "Rebuilding docker image..."
 	docker build --no-cache=true -t ${IMAGE_NAME} .
 
+network:
+	@echo "Trying: Removing old docker container..."
+	docker network create --subnet=172.18.0.0/24 $(NET_NAME)
 run:
+	@echo "Trying: Removing old docker container..."
+	-docker rm $(NAME)
 	@echo "Running docker image..."
-	docker run -d $(PORTS) --cidfile $(CID_FILE) -i -t ${IMAGE_NAME}
+	docker run --name $(NAME) --net $(NET_NAME) --ip $(IP_STATIC) -d $(PORTS) --cidfile $(CID_FILE) -i -t ${IMAGE_NAME}
 
 bash:
 	docker exec -it $(CID) /bin/bash
@@ -39,9 +47,11 @@ stop:
 clean:
 	# Cleanup cidfile on disk
 	-rm $(CID_FILE)
+	-docker network rm $(NET_NAME)
 
 cli:
-	docker exec -it $(CID) /redis/src/redis-cli -p 7000
+	@echo "Starting CLI with redirect enabled (-c option)"
+	docker exec -it $(CID) /redis/src/redis-cli -c -p 7000
 
 compose-build:
 	docker-compose -f docker-compose.yml build

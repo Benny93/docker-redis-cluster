@@ -9,11 +9,13 @@ The main usage for this container is to test redis cluster code. For example in 
 
 The cluster is 6 redis instances running with 3 master & 3 slaves, one slave for each master. They run on ports 7000 to 7005.
 
-It also contains 2 standalone instances that is not part of the cluster. They are running on port 7006 & 7007
+~~It also contains 2 standalone instances that is not part of the cluster. They are running on port 7006 & 7007~~
+This fork was created to get rid of the two standalone instances.
 
 This image requires at least `Docker` version 1.10 but the latest version is recommended.
 
-
+# Fork notes
+- Added Notifications to conf files.
 
 # Available tags
 

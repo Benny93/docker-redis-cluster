@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$1" = 'redis-cluster' ]; then
-    for port in `seq 7000 7007`; do
+    for port in `seq 7000 7005`; do
       mkdir -p /redis-conf/${port}
       mkdir -p /redis-data/${port}
 
@@ -14,9 +14,7 @@ if [ "$1" = 'redis-cluster' ]; then
       PORT=${port} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
     done
 
-    for port in `seq 7006 7007`; do
-      PORT=${port} envsubst < /redis-conf/redis.tmpl > /redis-conf/${port}/redis.conf
-    done
+
 
     supervisord -c /etc/supervisor/supervisord.conf
     sleep 3
