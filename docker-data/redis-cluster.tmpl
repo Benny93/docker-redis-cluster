@@ -4,5 +4,6 @@ cluster-enabled yes
 cluster-config-file nodes.conf
 cluster-node-timeout 5000
 appendonly yes
+appendfsync always
 dir /redis-data/${PORT}
 notify-keyspace-events "AKE"
